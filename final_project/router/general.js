@@ -3,14 +3,16 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
-const axios = require("axios");
-axios.get("http://localhost:3000/")
 
-const getBooks = () => {
-    return new Promise((resolve) => {
-        resolve(books);
-    });
+const axios = require("axios");
+
+const getBooks = async () => {
+    const response = await axios.get(
+        "https://raw.githubusercontent.com/ibm-developer-skills-network/expressBookReviews/main/booksdb.json"
+    );
+    return response.data;
 };
+
 
 function doesExist(username) {
     return users.some((user) => user.username === username);
@@ -49,13 +51,21 @@ public_users.get('/', async (req, res) => {
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', async (req, res) => {
-    const data = await getBooks();
-    const book = data[req.params.isbn];
+    try {
+        const data = await getBooks();
+        const book = data[req.params.isbn];
 
-    if (book) {
-        res.status(200).json(book);
-    } else {
-        res.status(404).json({message:"ISBN not found."});
+        if (book) {
+            return res.status(200).json(book);
+        } else {
+            return res.status(404).json({
+                message: "ISBN not found."
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
     }
 });
   

@@ -1,3 +1,4 @@
-curl -X DELETE http://localhost:3000/customer/auth/review/1 \host:3000/customer/auth/revi
+curl -X DELETE http://localhost:3000/customer/auth/review/1 \
 -b cookie.txt
-{"message":"Book review deleted."}
+
+{"message":"Review for ISBN 1 deleted"}
